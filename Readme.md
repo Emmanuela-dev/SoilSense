@@ -1,79 +1,16 @@
+# React + Vite
 
-SoilSense AI
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-SoilSense AI is an AI-powered soil health diagnostic and advisory platform designed to help extension officers assess soil conditions in real time and provide actionable recommendations during field visits.
+Currently, two official plugins are available:
 
-The system combines:
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
 
-Soil image analysis using smartphone cameras
-Soil moisture sensing
-Soil pH sensing
-Soil temperature sensing
-GPS location data
-AI-powered recommendation generation
+## React Compiler
 
-Instead of only displaying raw sensor values, the platform interprets soil conditions and converts them into practical recommendations such as:
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-Lime application guidance
-Fertilizer optimization advice
-Organic manure recommendations
-Soil restoration practices
-Cover crop recommendations
-Irrigation recommendations
+## Expanding the ESLint configuration
 
-The system also explains why each recommendation is made, improving trust and understanding among both extension officers and farmers.
-
-Example Output
-
-Diagnosis:
-High Soil Acidity
-
-Recommendation:
-Apply agricultural lime at approximately 2 bags per acre.
-
-Reason:
-The soil pH is below the recommended range for maize production, reducing nutrient availability and fertilizer efficiency.
-
-5. Build Plan
-Phase 1: Data Collection
-
-We will collect:
-
-Soil moisture readings
-Soil pH readings
-Soil temperature readings
-Soil images
-GPS coordinates
-Crop information
-Phase 2: IoT Integration
-
-Hardware Components:
-
-ESP32 Microcontroller
-Soil Moisture Sensor
-Soil pH Sensor
-Soil Temperature Sensor
-
-The sensors will capture field data and transmit it to the platform for analysis.
-
-Phase 3: AI Advisory Engine
-
-The AI component will:
-
-Analyze sensor readings
-Interpret soil health conditions
-Generate recommendations
-Provide explanations for each recommendation
-Flag cases that require expert review
-Phase 4: Dashboard Development
-
-The platform will provide:
-
-Soil health reports
-Advisory recommendations
-Soil health scoring
-Geo-referenced soil intelligence
-Extension officer management tools
-Phase 5: Testing and Validation
-
-We will test the system using sample soil conditions and verify that the recommendations are understandable, actionable, and useful for extension officers in real-world field environments.
+If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
