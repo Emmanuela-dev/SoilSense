@@ -429,8 +429,7 @@ function Landing() {
               Built for Kenyan Farmers
             </p>
           </div>
-          <p className="text-green-300 text-sm">📍 Kiambu Town, Kenya</p>
-        </div>
+          </div>
       </footer>
 
     </div>
