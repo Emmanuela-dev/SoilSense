@@ -1,9 +1,10 @@
-import { dashboardStats } from "../../data/mockData"
+import { useEffect, useState } from "react"
+import { api } from "../../api/client"
 
-const cards = [
+const baseCards = [
   {
     title: "Soil Health Score",
-    value: dashboardStats.soilHealthScore,
+    value: 78,
     unit: "/100",
     change: "+12%",
     changeType: "positive",
@@ -13,7 +14,7 @@ const cards = [
   },
   {
     title: "Total Assessments",
-    value: dashboardStats.totalAssessments,
+    value: 128,
     unit: "",
     change: "+18%",
     changeType: "positive",
@@ -23,7 +24,7 @@ const cards = [
   },
   {
     title: "High Risk Soils",
-    value: dashboardStats.highRiskSoils,
+    value: 32,
     unit: "",
     change: "+8%",
     changeType: "negative",
@@ -32,18 +33,38 @@ const cards = [
     description: "Attention needed",
   },
   {
-    title: "Farmers Reached",
-    value: dashboardStats.farmersReached,
+    title: "Healthy Soils",
+    value: 0,
     unit: "",
-    change: "+15%",
+    change: "Live",
     changeType: "positive",
-    icon: "👨‍🌾",
-    iconBg: "bg-yellow-100",
-    description: "This month",
+    icon: "✅",
+    iconBg: "bg-green-100",
+    description: "Good condition",
   },
 ]
 
 function StatsCards() {
+  const [stats, setStats] = useState({
+    totalAssessments: 128,
+    highRiskSoils: 32,
+    healthySoils: 0,
+  })
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    api.getDashboard()
+      .then((data) => setStats(data))
+      .finally(() => setLoading(false))
+  }, [])
+
+  const cards = baseCards.map((card) => {
+    if (card.title === "Total Assessments") return { ...card, value: stats.totalAssessments || 0 }
+    if (card.title === "High Risk Soils") return { ...card, value: stats.highRiskSoils || 0 }
+    if (card.title === "Healthy Soils") return { ...card, value: stats.healthySoils || 0 }
+    return card
+  })
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
       {cards.map((card) => (
@@ -51,7 +72,6 @@ function StatsCards() {
           key={card.title}
           className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200"
         >
-          {/* Top Row */}
           <div className="flex items-start justify-between mb-4">
             <div>
               <p className="text-gray-600 text-xs font-medium uppercase tracking-wide">
@@ -63,17 +83,15 @@ function StatsCards() {
             </div>
           </div>
 
-          {/* Value */}
           <div className="flex items-end gap-1 mb-2">
             <span className="text-3xl font-bold text-gray-800">
-              {card.value}
+              {loading ? "..." : card.value}
             </span>
             {card.unit && (
               <span className="text-gray-600 text-sm mb-1">{card.unit}</span>
             )}
           </div>
 
-          {/* Bottom Row */}
           <div className="flex items-center gap-2">
             <span
               className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
