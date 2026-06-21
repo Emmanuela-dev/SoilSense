@@ -424,7 +424,7 @@ function Landing() {
           <div className="flex items-center gap-2">
             <Sprout className="w-4 h-4 text-green-300" />
             <p className="text-green-200 text-sm">
-              © 2025{" "}
+              © 2026{" "}
               <span className="font-bold text-white">SoilSense AI</span> —
               Built for Kenyan Farmers
             </p>

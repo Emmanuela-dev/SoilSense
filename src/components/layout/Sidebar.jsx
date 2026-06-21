@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useNavigate, useLocation } from "react-router-dom"
 import {
   LayoutDashboard,
   FlaskConical,
@@ -12,17 +12,18 @@ import {
 } from "lucide-react"
 
 const navItems = [
-  { icon: LayoutDashboard, label: "Dashboard" },
-  { icon: FlaskConical, label: "Assessments" },
-  { icon: CloudSun, label: "Weather Intelligence" },
-  { icon: Lightbulb, label: "Recommendations" },
-  { icon: Map, label: "Farm Map" },
-  { icon: BarChart2, label: "Reports" },
-  { icon: Settings, label: "Settings" },
+  { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
+  { icon: FlaskConical, label: "Assessments", path: "/assessments" },
+  { icon: CloudSun, label: "Weather Intelligence", path: "/weather" },
+  { icon: Lightbulb, label: "Recommendations", path: "/recommendations" },
+  { icon: Map, label: "Farm Map", path: "/map" },
+  { icon: BarChart2, label: "Reports", path: "/reports" },
+  { icon: Settings, label: "Settings", path: "/settings" },
 ]
 
 function Sidebar() {
-  const [activeItem, setActiveItem] = useState("Dashboard")
+  const navigate = useNavigate()
+  const location = useLocation()
 
   return (
     <div className="fixed left-0 top-0 h-screen w-64 bg-[#166534] flex flex-col z-50 shadow-2xl">
@@ -46,19 +47,20 @@ function Sidebar() {
       <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
         {navItems.map((item) => {
           const Icon = item.icon
+          const isActive = location.pathname === item.path
           return (
             <button
               key={item.label}
-              onClick={() => setActiveItem(item.label)}
+              onClick={() => navigate(item.path)}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
-                activeItem === item.label
+                isActive
                   ? "bg-[#22C55E] text-white shadow-lg"
                   : "text-green-200 hover:bg-green-700 hover:text-white"
               }`}
             >
               <Icon className="w-4 h-4 shrink-0" />
               <span>{item.label}</span>
-              {activeItem === item.label && (
+              {isActive && (
                 <span className="ml-auto w-1.5 h-1.5 rounded-full bg-white"></span>
               )}
             </button>

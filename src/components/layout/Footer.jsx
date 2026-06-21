@@ -12,34 +12,20 @@ function Footer() {
             Smart Soil. Better Yields.
           </p>
           <span className="text-gray-300">|</span>
-          <p className="text-gray-600 text-sm font-medium">Version 1.0.0 Beta</p>
-        </div>
+          </div>
 
         {/* Center */}
         <div className="hidden md:flex items-center gap-8">
-          <button className="text-gray-600 text-sm font-medium hover:text-[#166534] transition-colors">
-            Documentation
-          </button>
-          <button className="text-gray-600 text-sm font-medium hover:text-[#166534] transition-colors">
-            Support
-          </button>
-          <button className="text-gray-600 text-sm font-medium hover:text-[#166534] transition-colors">
-            Privacy Policy
-          </button>
-          <button className="text-gray-600 text-sm font-medium hover:text-[#166534] transition-colors">
-            Terms of Use
-          </button>
-        </div>
+         </div>
 
         {/* Right Side */}
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-            <p className="text-gray-600 text-sm font-medium">All systems operational</p>
-          </div>
+        </div>
           <span className="text-gray-300">|</span>
           <p className="text-gray-700 text-sm font-medium">
-            © 2025 SoilSense AI. Built for Kenyan Farmers.
+            © 2026 SoilSense AI. Built for Kenyan Farmers.
           </p>
         </div>
 
