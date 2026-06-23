@@ -7,6 +7,7 @@ import Recommendations from "./pages/Recommendations"
 import FarmMap from "./pages/FarmMap"
 import Reports from "./pages/Reports"
 import Settings from "./pages/Settings"
+import NewAssessment from "./pages/NewAssessment"
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path="/map" element={<FarmMap />} />
         <Route path="/reports" element={<Reports />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/new-assessment" element={<NewAssessment />} />
       </Routes>
     </BrowserRouter>
   )

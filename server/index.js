@@ -1,3 +1,4 @@
+import aiRoutes from "./routes/aiRoutes.js"
 import express from "express"
 import cors from "cors"
 import { config } from "./config.js"
@@ -31,6 +32,7 @@ app.use("/api/recommendations", recommendationRoutes)
 app.use("/api/weather", weatherRoutes)
 app.use("/api/farms", farmRoutes)
 app.use("/api/reports", reportRoutes)
+app.use("/api/ai", aiRoutes)
 
 app.use((error, req, res) => {
   console.error(error)

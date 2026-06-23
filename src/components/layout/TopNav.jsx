@@ -24,7 +24,10 @@ function TopNav({ pageTitle }) {
         </button>
 
         {/* New Assessment Button */}
-        <button className="flex items-center gap-2 bg-[#166534] hover:bg-green-800 text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition-all shadow-sm hover:shadow-md">
+        <button
+          onClick={() => window.location.href = "/new-assessment"}
+          className="flex items-center gap-2 bg-[#166534] hover:bg-green-800 text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition-all shadow-sm hover:shadow-md"
+       >
           <span className="text-base">+</span>
           <span>New Assessment</span>
         </button>

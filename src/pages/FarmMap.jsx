@@ -169,7 +169,7 @@ function FarmMap() {
             {/* Map Label */}
             <div className="absolute bottom-4 left-4 bg-white/80 backdrop-blur-sm rounded-xl px-3 py-2 border border-gray-100">
               <p className="text-gray-700 text-xs font-semibold">
-                📍 Kiambu Town, Kenya
+                Kiambu Town, Kenya
               </p>
               <p className="text-gray-500 text-xs">
                 Showing: {activeLayer}
@@ -243,7 +243,7 @@ function FarmMap() {
           {selectedFarm && (
             <div className="mx-4 my-4 p-4 bg-[#F0FDF4] rounded-xl border border-green-100">
               <p className="text-green-700 text-xs font-bold mb-3">
-                📍 {selectedFarm.farm}
+                 {selectedFarm.farm}
               </p>
               <div className="grid grid-cols-3 gap-2">
                 <div className="text-center">
