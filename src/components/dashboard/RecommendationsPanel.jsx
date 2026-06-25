@@ -14,7 +14,8 @@ function PriorityBadge({ priority }) {
   )
 }
 
-function RecommendationsPanel() {
+function RecommendationsPanel({ aiRecommendations }) {
+  const displayRecommendations = aiRecommendations || recommendations
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden h-full">
 
@@ -31,7 +32,7 @@ function RecommendationsPanel() {
 
       {/* Recommendations List */}
       <div className="divide-y divide-gray-50">
-        {recommendations.map((rec, index) => (
+        {displayRecommendations.map((rec, index) => (
           <div
             key={rec.id}
             className="px-6 py-4 hover:bg-gray-50 transition-colors cursor-pointer"
