@@ -1,6 +1,6 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import DashboardLayout from "../components/layout/DashboardLayout"
-import { recentAssessments } from "../data/mockData"
+import { api } from "../api/client"
 import { MapPin, Layers, ZoomIn, ZoomOut, Navigation } from "lucide-react"
 
 function StatusDot({ status }) {
@@ -15,24 +15,70 @@ function StatusDot({ status }) {
 }
 
 function FarmMap() {
-  const [selectedFarm, setSelectedFarm] = useState(recentAssessments[0])
+  const [farms, setFarms] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [selectedFarm, setSelectedFarm] = useState(null)
   const [activeLayer, setActiveLayer] = useState("Soil Health")
 
   const layers = ["Soil Health", "pH Levels", "Moisture", "Temperature"]
-
-  const farmLocations = [
-    { id: 1, name: "Nyamirama Farm", top: "35%", left: "42%", status: "High Risk" },
-    { id: 2, name: "Riana Farm", top: "55%", left: "60%", status: "Moderate" },
-    { id: 3, name: "Borabu Farm", top: "25%", left: "65%", status: "Healthy" },
-    { id: 4, name: "Koumbu Farm", top: "65%", left: "38%", status: "Moderate" },
-    { id: 5, name: "Manga Farm", top: "45%", left: "25%", status: "Healthy" },
-  ]
 
   const pinColors = {
     "High Risk": "bg-red-500 border-red-600",
     "Moderate": "bg-yellow-500 border-yellow-600",
     "Healthy": "bg-green-500 border-green-600",
   }
+
+  const getFarmPosition = (farmName, farmId) => {
+    const defaults = {
+      "Nyamirama Farm": { top: "35%", left: "42%" },
+      "Riana Farm": { top: "55%", left: "60%" },
+      "Borabu Farm": { top: "25%", left: "65%" },
+      "Koumbu Farm": { top: "65%", left: "38%" },
+      "Manga Farm": { top: "45%", left: "25%" },
+      "Kisii Demo Farm": { top: "15%", left: "50%" },
+    }
+    if (defaults[farmName]) return defaults[farmName]
+
+    let hash = 0
+    const str = farmId || farmName || ""
+    for (let i = 0; i < str.length; i++) {
+      hash = str.charCodeAt(i) + ((hash << 5) - hash)
+    }
+    const top = 15 + Math.abs(hash % 70)
+    const left = 15 + Math.abs((hash >> 8) % 70)
+    return { top: `${top}%`, left: `${left}%` }
+  }
+
+  useEffect(() => {
+    let active = true
+    api.getFarmMap()
+      .then((data) => {
+        if (active) {
+          const mappedFarms = (data || []).map((farm) => ({
+            ...farm,
+            id: farm.farmId,
+            farm: farm.name,
+            pH: farm.pH,
+            moisture: `${farm.moisture}%`,
+            temperature: `${farm.temperature}°C`,
+            ...getFarmPosition(farm.name, farm.farmId),
+          }))
+          setFarms(mappedFarms)
+          if (mappedFarms.length > 0) {
+            setSelectedFarm(mappedFarms[0])
+          }
+        }
+      })
+      .catch((err) => console.error(err))
+      .finally(() => {
+        if (active) {
+          setLoading(false)
+        }
+      })
+    return () => {
+      active = false
+    }
+  }, [])
 
   return (
     <DashboardLayout pageTitle="Farm Map">
@@ -56,10 +102,10 @@ function FarmMap() {
       {/* Summary Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         {[
-          { label: "Total Farms", value: "5", color: "text-gray-800", icon: "🌾" },
-          { label: "High Risk", value: "1", color: "text-red-500", icon: "🚨" },
-          { label: "Moderate", value: "2", color: "text-yellow-500", icon: "⚠️" },
-          { label: "Healthy", value: "2", color: "text-green-600", icon: "✅" },
+          { label: "Total Farms", value: loading ? "..." : String(farms.length), color: "text-gray-800", icon: "🌾" },
+          { label: "High Risk", value: loading ? "..." : String(farms.filter((f) => f.status === "High Risk").length), color: "text-red-500", icon: "🚨" },
+          { label: "Moderate", value: loading ? "..." : String(farms.filter((f) => f.status === "Moderate").length), color: "text-yellow-500", icon: "⚠️" },
+          { label: "Healthy", value: loading ? "..." : String(farms.filter((f) => f.status === "Healthy").length), color: "text-green-600", icon: "✅" },
         ].map((card) => (
           <div
             key={card.label}
@@ -137,12 +183,10 @@ function FarmMap() {
             </div>
 
             {/* Farm Pins */}
-            {farmLocations.map((farm) => (
+            {farms.map((farm) => (
               <button
                 key={farm.id}
-                onClick={() => setSelectedFarm(
-                  recentAssessments.find((a) => a.farm === farm.name) || recentAssessments[0]
-                )}
+                onClick={() => setSelectedFarm(farm)}
                 className="absolute transform -translate-x-1/2 -translate-y-1/2 group"
                 style={{ top: farm.top, left: farm.left }}
               >
@@ -209,34 +253,44 @@ function FarmMap() {
 
           {/* Farm Cards */}
           <div className="divide-y divide-gray-50">
-            {recentAssessments.map((farm) => (
-              <button
-                key={farm.id}
-                onClick={() => setSelectedFarm(farm)}
-                className={`w-full px-6 py-4 text-left hover:bg-gray-50 transition-colors ${
-                  selectedFarm?.id === farm.id ? "bg-green-50 border-l-4 border-[#166534]" : ""
-                }`}
-              >
-                <div className="flex items-center gap-3">
-                  <StatusDot status={farm.status} />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-gray-800 text-sm font-semibold truncate">
-                      {farm.farm}
-                    </p>
-                    <p className="text-gray-600 text-xs">{farm.crop}</p>
+            {loading ? (
+              <div className="px-6 py-4 text-center text-gray-500 text-sm">
+                Loading farms...
+              </div>
+            ) : farms.length === 0 ? (
+              <div className="px-6 py-4 text-center text-gray-500 text-sm">
+                No farms mapped.
+              </div>
+            ) : (
+              farms.map((farm) => (
+                <button
+                  key={farm.id}
+                  onClick={() => setSelectedFarm(farm)}
+                  className={`w-full px-6 py-4 text-left hover:bg-gray-50 transition-colors ${
+                    selectedFarm?.id === farm.id ? "bg-green-50 border-l-4 border-[#166534]" : ""
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <StatusDot status={farm.status} />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-gray-800 text-sm font-semibold truncate">
+                        {farm.name}
+                      </p>
+                      <p className="text-gray-600 text-xs">{farm.crop}</p>
+                    </div>
+                    <div className="text-right shrink-0">
+                      <p className={`text-xs font-bold ${
+                        farm.status === "High Risk" ? "text-red-500" :
+                        farm.status === "Moderate" ? "text-yellow-500" : "text-green-600"
+                      }`}>
+                        pH {farm.pH}
+                      </p>
+                      <p className="text-gray-500 text-xs">{farm.status}</p>
+                    </div>
                   </div>
-                  <div className="text-right shrink-0">
-                    <p className={`text-xs font-bold ${
-                      farm.status === "High Risk" ? "text-red-500" :
-                      farm.status === "Moderate" ? "text-yellow-500" : "text-green-600"
-                    }`}>
-                      pH {farm.pH}
-                    </p>
-                    <p className="text-gray-500 text-xs">{farm.status}</p>
-                  </div>
-                </div>
-              </button>
-            ))}
+                </button>
+              ))
+            )}
           </div>
 
           {/* Selected Farm Detail */}

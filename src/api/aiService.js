@@ -3,7 +3,7 @@
 // Connects React frontend to AI Engine
 // ============================================
 
-const AI_BASE_URL = "http://localhost:5175"
+const AI_BASE_URL = "/api/ai"
 
 /**
  * Analyze soil readings using AI engine

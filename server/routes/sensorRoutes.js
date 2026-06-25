@@ -1,7 +1,8 @@
 import express from "express"
 import { randomUUID } from "node:crypto"
 import { read, write } from "../db.js"
-import { formatSensorReading, optionalNumber, requiredNumber, requiredString } from "./assessmentRoutes.js"
+import { formatSensorReading } from "../utils.js"
+import { optionalNumber, requiredNumber, requiredString } from "./assessmentRoutes.js"
 
 const router = express.Router()
 

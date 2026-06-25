@@ -129,7 +129,7 @@ export async function seedDatabase() {
   }
 }
 
-if (process.argv[1] && process.argv[1].endsWith("server/seed.js")) {
+if (process.argv[1] && (process.argv[1].endsWith("server/seed.js") || process.argv[1].endsWith("server\\seed.js"))) {
   seedDatabase()
     .then(() => console.log("Neo4j seed data created successfully"))
     .catch((error) => {

@@ -1,6 +1,7 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useNavigate } from "react-router-dom"
 import DashboardLayout from "../components/layout/DashboardLayout"
-import { recentAssessments } from "../data/mockData"
+import { api } from "../api/client"
 import { Search, Filter, Plus, Eye, Trash2, Download } from "lucide-react"
 
 function StatusBadge({ status }) {
@@ -23,15 +24,37 @@ function StatusBadge({ status }) {
 }
 
 function Assessments() {
+  const navigate = useNavigate()
   const [search, setSearch] = useState("")
   const [filter, setFilter] = useState("All")
+  const [assessments, setAssessments] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    let active = true
+    api.getAssessments()
+      .then((data) => {
+        if (active) {
+          setAssessments(data || [])
+        }
+      })
+      .catch((err) => console.error(err))
+      .finally(() => {
+        if (active) {
+          setLoading(false)
+        }
+      })
+    return () => {
+      active = false
+    }
+  }, [])
 
   const filters = ["All", "Healthy", "Moderate", "High Risk"]
 
-  const filtered = recentAssessments.filter((a) => {
+  const filtered = assessments.filter((a) => {
     const matchesSearch =
-      a.farm.toLowerCase().includes(search.toLowerCase()) ||
-      a.crop.toLowerCase().includes(search.toLowerCase())
+      (a.farm || "").toLowerCase().includes(search.toLowerCase()) ||
+      (a.crop || "").toLowerCase().includes(search.toLowerCase())
     const matchesFilter = filter === "All" || a.status === filter
     return matchesSearch && matchesFilter
   })
@@ -47,7 +70,10 @@ function Assessments() {
             Manage and review all soil health evaluations
           </p>
         </div>
-        <button className="flex items-center gap-2 bg-[#166534] hover:bg-green-800 text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition-all shadow-sm">
+        <button
+          onClick={() => navigate("/new-assessment")}
+          className="flex items-center gap-2 bg-[#166534] hover:bg-green-800 text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition-all shadow-sm"
+        >
           <Plus className="w-4 h-4" />
           New Assessment
         </button>
@@ -60,7 +86,7 @@ function Assessments() {
             Total Assessments
           </p>
           <p className="text-3xl font-bold text-gray-800 mt-2">
-            {recentAssessments.length}
+            {loading ? "..." : assessments.length}
           </p>
           <p className="text-green-600 text-xs mt-1 font-medium">
             This month
@@ -71,7 +97,7 @@ function Assessments() {
             High Risk Farms
           </p>
           <p className="text-3xl font-bold text-red-500 mt-2">
-            {recentAssessments.filter((a) => a.status === "High Risk").length}
+            {loading ? "..." : assessments.filter((a) => a.status === "High Risk").length}
           </p>
           <p className="text-red-400 text-xs mt-1 font-medium">
             Needs immediate attention
@@ -82,7 +108,7 @@ function Assessments() {
             Healthy Farms
           </p>
           <p className="text-3xl font-bold text-green-600 mt-2">
-            {recentAssessments.filter((a) => a.status === "Healthy").length}
+            {loading ? "..." : assessments.filter((a) => a.status === "Healthy").length}
           </p>
           <p className="text-green-500 text-xs mt-1 font-medium">
             Good condition
@@ -225,7 +251,7 @@ function Assessments() {
         {/* Table Footer */}
         <div className="px-6 py-3 bg-gray-50 border-t border-gray-100 flex items-center justify-between">
           <p className="text-gray-600 text-xs">
-            Showing {filtered.length} of {recentAssessments.length} assessments
+            Showing {filtered.length} of {assessments.length} assessments
           </p>
           <button className="text-[#166534] text-xs font-semibold hover:text-green-700 transition-colors">
             Export CSV →

@@ -70,17 +70,33 @@ export function getCommonIssue(condition) {
 }
 
 export function formatAssessment(assessment, farm) {
+  const farmName = assessment.farmName || farm?.name || assessment.farmId || "Unknown Farm"
+  const phVal = roundOne(assessment.ph)
+  const moistureVal = roundNumber(assessment.moisture)
+  const tempVal = roundNumber(assessment.temperature)
+  const dateStr = assessment.createdAt ? new Date(assessment.createdAt).toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric"
+  }) : ""
+
   return {
     id: assessment.assessmentId,
     farmId: assessment.farmId,
-    farmName: assessment.farmName || farm?.name,
-    crop: assessment.crop,
-    ph: roundOne(assessment.ph),
-    moisture: roundNumber(assessment.moisture),
-    temperature: roundNumber(assessment.temperature),
+    farmName: farmName,
+    farm: farmName,
+    crop: assessment.crop ? (assessment.crop.charAt(0).toUpperCase() + assessment.crop.slice(1)) : "",
+    ph: phVal,
+    pH: phVal,
+    moistureVal: moistureVal,
+    temperatureVal: tempVal,
+    moisture: `${moistureVal}%`,
+    temperature: `${tempVal}°C`,
     soilCondition: assessment.soilCondition,
+    status: assessment.soilCondition,
     soilHealthScore: assessment.soilHealthScore,
     createdAt: assessment.createdAt,
+    date: dateStr,
   }
 }
 

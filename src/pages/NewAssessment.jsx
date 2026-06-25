@@ -2,6 +2,7 @@ import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import DashboardLayout from "../components/layout/DashboardLayout"
 import { analyzeSoil } from "../api/aiService"
+import { api } from "../api/client"
 import {
   FlaskConical,
   Loader,
@@ -138,6 +139,33 @@ function NewAssessment() {
       location: "Kiambu Town, Kenya",
       rainExpected: false,
     })
+  }
+
+  const [saveLoading, setSaveLoading] = useState(false)
+
+  async function handleSaveAssessment() {
+    if (!result) return
+    setSaveLoading(true)
+    setError("")
+    try {
+      await api.createAssessment({
+        farmName: formData.farmName,
+        crop: formData.crop,
+        ph: Number(result.readings.ph),
+        moisture: Number(result.readings.moisture),
+        temperature: Number(result.readings.temperature),
+        soilCondition: result.soilHealth.label,
+        soilHealthScore: Number(result.soilHealth.score),
+        latitude: -1.2921,
+        longitude: 36.8219,
+      })
+      navigate("/assessments")
+    } catch (err) {
+      console.error(err)
+      setError("Failed to save assessment to database. Make sure Neo4j database is running.")
+    } finally {
+      setSaveLoading(false)
+    }
   }
 
   return (
@@ -535,9 +563,22 @@ function NewAssessment() {
 
               {/* Action Buttons */}
               <div className="grid grid-cols-2 gap-3">
-                <button className="py-3 bg-[#166534] text-white text-sm font-bold rounded-xl hover:bg-green-800 transition-all flex items-center justify-center gap-2">
-                  <CheckCircle className="w-4 h-4" />
-                  Save Assessment
+                <button
+                  onClick={handleSaveAssessment}
+                  disabled={saveLoading}
+                  className="py-3 bg-[#166534] text-white text-sm font-bold rounded-xl hover:bg-green-800 transition-all flex items-center justify-center gap-2 disabled:opacity-75"
+                >
+                  {saveLoading ? (
+                    <>
+                      <Loader className="w-4 h-4 animate-spin" />
+                      Saving...
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle className="w-4 h-4" />
+                      Save Assessment
+                    </>
+                  )}
                 </button>
                 <button
                   onClick={() => navigate("/recommendations")}

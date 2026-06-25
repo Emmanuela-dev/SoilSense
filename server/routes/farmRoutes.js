@@ -16,7 +16,12 @@ router.get("/map", async (req, res, next) => {
         name: f.name,
         latitude: f.latitude,
         longitude: f.longitude,
-        soilHealthScore: coalesce(latest.soilHealthScore, 0)
+        soilHealthScore: coalesce(latest.soilHealthScore, 0),
+        status: coalesce(latest.soilCondition, 'Healthy'),
+        pH: coalesce(latest.ph, 6.0),
+        moisture: coalesce(latest.moisture, 60),
+        temperature: coalesce(latest.temperature, 22),
+        crop: coalesce(latest.crop, 'maize')
       } AS farm
       ORDER BY f.name
     `)
